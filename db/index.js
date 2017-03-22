@@ -10,7 +10,7 @@ app.set('view engine','ejs');
 app.set('views',__dirname+'../views');
 
 //database connection
-mongoose.connect('mongodb://himanidivya:himanidivya@ds147069.mlab.com:47069/treasurehunt123');
+mongoose.connect('mongodb://xxx:xxx@ds147069.mlab.com:47069/treasurehunt123');
 
 var db=mongoose.connection;
 //if any error occurs
