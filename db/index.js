@@ -1,7 +1,16 @@
 //importing module for mongo db setup
 var mongoose=require('mongoose');
+var autoIncrement=require('mongoose-auto-increment');
+var express=require('express');
+var app=express();
+
+var ejs=require('ejs');
+
+app.set('view engine','ejs');
+app.set('views',__dirname+'../views');
+
 //database connection
-mongoose.connect('mongodb://xxx:xxx@ds147069.mlab.com:47069/treasurehunt123');
+mongoose.connect('mongodb://himanidivya:himanidivya@ds147069.mlab.com:47069/treasurehunt123');
 
 var db=mongoose.connection;
 //if any error occurs
@@ -11,6 +20,8 @@ db.on('error',console.error.bind(console,'connection error'));
 db.once('open',function(){
 	console.log('Connected To mongoose');
 });
+
+autoIncrement.initialize(db);
 
 var userSchema=mongoose.Schema({
 
@@ -37,6 +48,13 @@ level:{
 	}
 });
 
+userSchema.plugin(autoIncrement.plugin,{
+	model:'User',
+	field:'userid',
+	type:Number,
+	startAt:1,
+	incrementBy:1
+});
 //userSchema.index({email:1, phoneno: 1},{unique:true});
 
 //model setup
@@ -62,7 +80,7 @@ exports.addUser=function(req,res){
 	});
 
 	user.save(function(err,info){
-			res.redirect('/../xunbao');
+			res.render('xunbao',{data:info});
 	});
 
 	}
@@ -77,7 +95,7 @@ var password1=req.body.password1;
 User.findOne({phoneno:phoneno1},function(err,user){
 	if(user)
 	{
-		res.redirect('/../xunbao');
+		res.render('xunbao',{data:user});
 	}
 	else
 	{
@@ -87,6 +105,36 @@ User.findOne({phoneno:phoneno1},function(err,user){
 
 };
 
+var questionSchema=mongoose.Schema({
+	question:{
+		type:String,
+		required:true
+	},
+	answer:{
+		type:String,
+		required:true
+	}
+});
+
+questionSchema.plugin(autoIncrement.plugin,{
+	model:'Question',
+	field:'questionid',
+	type:Number,
+	startAt:1,
+	incrementBy:1
+});
+
+var Question=mongoose.model('Question',questionSchema);
+
+exports.addquestion=function(req,res){
+	var question=new Question({
+		question:'what is your name',
+		answer:'my name'
+	});	
+	question.save(function(err,info){
+		res.send(info);	
+	});
+};
 
 
 //module.exports=User;

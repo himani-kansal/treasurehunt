@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 
 app.get('/',routes);
 
+app.get('/getquestion',db.addquestion);
 //for adding new user
 app.post('/signup',db.addUser);
 
